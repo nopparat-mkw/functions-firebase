@@ -20,7 +20,17 @@ exports.listcontent = functions.https.onRequest((request, response) => {
      var ref = db.ref("contents");
      ref.once("value", function(snapshot) {
        response.contentType('application/json');
-       response.send(JSON.stringify(snapshot.val()));
+
+      
+       let contentsList = [];
+    
+       snapshot.forEach((child) => {
+         let slide = child.val()
+         slide._key = child.key
+         contentsList.push(slide);
+        });
+
+       response.send(JSON.stringify(contentsList));
      });
   }
 });
