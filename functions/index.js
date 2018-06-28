@@ -1,4 +1,5 @@
-
+'use strict'
+const cors = require('cors')({origin: true});
 const functions = require('firebase-functions');
 
 // // Create and Deploy Your First Cloud Functions
@@ -16,21 +17,23 @@ admin.initializeApp(functions.config().firebase);
 // Get a database reference to our posts
 var db = admin.database();
 exports.listcontent = functions.https.onRequest((request, response) => {
-  if(request.method === 'GET'){
-     var ref = db.ref("contents");
-     ref.once("value", function(snapshot) {
-       response.contentType('application/json');
-
-      
-       let contentsList = [];
-    
-       snapshot.forEach((child) => {
-         let slide = child.val()
-         slide._key = child.key
-         contentsList.push(slide);
-        });
-
-       response.send(JSON.stringify(contentsList));
-     });
-  }
+  cors(request, response, () => {
+    if(request.method === 'GET'){
+      var ref = db.ref("contents");
+      ref.once("value", function(snapshot) {
+        response.contentType('application/json');
+ 
+       
+        let contentsList = [];
+     
+        snapshot.forEach((child) => {
+          let slide = child.val()
+          slide._key = child.key
+          contentsList.push(slide);
+         });
+ 
+        response.send(JSON.stringify(contentsList));
+      });
+   }
+  })
 });
